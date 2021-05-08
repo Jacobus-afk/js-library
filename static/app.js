@@ -1,5 +1,5 @@
 "use strict";
-let myLibrary = [];
+const myLibrary = [];
 
 function Book(title, author, pages, haveread) {
     this.title = title;
@@ -13,7 +13,8 @@ function addBookToLibrary(book) {
 }
 
 function removeBookFromLibrary(title) {
-    myLibrary = myLibrary.filter(book => book.title !== title);
+    myLibrary.splice(myLibrary.findIndex(book => book.title === title), 1)
+    // myLibrary = myLibrary.filter(book => book.title !== title);
 }
 
 const addBookButton = document.querySelector(".add_book_button");
@@ -46,21 +47,33 @@ function handleNewBookAdd(event) {
     updateBookCase();
 }
 
-function removeBook(e) {
-    removeBookFromLibrary(e.currentTarget.id);
+function removeBook() {
+    removeBookFromLibrary(this.id);
+    updateBookCase();
+}
+
+function changeReadState() {
+    // console.log(this.id);
+    const index = myLibrary.findIndex(book => book.title === this.id);
+    myLibrary[index].read ^= true;
     updateBookCase();
 }
 
 function updateBookCase() {
     bookCase.innerHTML = "";
 
-    for (let book of myLibrary) {
+    for (const book of myLibrary) {
         bookCase.appendChild(addBookToShelf(book));
     }
 
     const closebuttons = bookCase.querySelectorAll(".card .cardclose");
-    for (let closebutton of closebuttons) {
+    for (const closebutton of closebuttons) {
         closebutton.addEventListener("click", removeBook);
+    }
+
+    const readbuttons = bookCase.querySelectorAll(".card .cardcontainer .cardreadbuttondiv .cardreadbutton")
+    for (const readbutton of readbuttons) {
+        readbutton.addEventListener("click", changeReadState);
     }
 }
 
@@ -71,6 +84,7 @@ function addBookToShelf(book) {
     const cardauthor = document.createElement("p");
     const cardpages = document.createElement("p");
     const cardreadbutton = document.createElement("button");
+    const buttondiv = document.createElement("div");
     const cardclose = document.createElement("div");
 
     card.classList.add("card");
@@ -79,6 +93,7 @@ function addBookToShelf(book) {
     cardauthor.classList.add("cardauthor");
     cardpages.classList.add("cardpages");
     cardreadbutton.classList.add("cardreadbutton");
+    buttondiv.classList.add("cardreadbuttondiv");
     cardclose.classList.add("cardclose");
 
     cardclose.innerHTML = "<span>x</span>";
@@ -95,7 +110,9 @@ function addBookToShelf(book) {
     cardcontainer.appendChild(cardtitle);
     cardcontainer.appendChild(cardauthor);
     cardcontainer.appendChild(cardpages);
-    cardcontainer.appendChild(cardreadbutton);
+    cardreadbutton.id = book.title;
+    buttondiv.appendChild(cardreadbutton);
+    cardcontainer.appendChild(buttondiv);
     card.appendChild(cardcontainer);
     return card;
 }
@@ -142,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         read: true
     }];
 
-    for (let book of books) {
+    for (const book of books) {
         const tmpbook = new Book(book.title, book.author, book.pages, book.read);
         addBookToLibrary(tmpbook);
     }
