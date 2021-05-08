@@ -6,14 +6,7 @@ function Book(title, author, pages, haveread) {
     this.author = author;
     this.pages = pages;
     this.read = haveread;
-    // this.info = function() {
-        
-    // }
 }
-
-// Book.prototype.info = function() {
-//     return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read ? "have read" : "not read yet"}`;
-// }
 
 function addBookToLibrary(book) {
     myLibrary.push(book);
@@ -21,11 +14,15 @@ function addBookToLibrary(book) {
 
 function removeBookFromLibrary(title) {
     myLibrary = myLibrary.filter(book => book.title !== title);
-    // console.log(myLibrary);
 }
 
 const addBookButton = document.querySelector(".add_book_button");
 const bookCase = document.querySelector(".bookcase");
+
+function removeBook(e) {
+    removeBookFromLibrary(e.currentTarget.id);
+    updateBookCase();
+}
 
 function updateBookCase() {
     bookCase.innerHTML = "";
@@ -40,15 +37,8 @@ function updateBookCase() {
     }
 }
 
-function removeBook(e) {
-    // console.log(e.target);
-    removeBookFromLibrary(e.currentTarget.id);
-    updateBookCase();
-}
-
 function addBookToShelf(book) {
     const card = document.createElement("div");
-    // const carddiv = document.createElement("div");
     const cardcontainer = document.createElement("div");
     const cardtitle = document.createElement("h4");
     const cardauthor = document.createElement("p");
@@ -63,29 +53,23 @@ function addBookToShelf(book) {
     cardpages.classList.add("cardpages");
     cardreadbutton.classList.add("cardreadbutton");
     cardclose.classList.add("cardclose");
-    // carddiv.innerHTML = "<span class=\"cardclose\">x</span>"
-    // carddiv.innerHTML += "<img src=\"static/open-book-clip-art_3637477.png\" style=\"width:100%\">"
+
     cardclose.innerHTML = "<span>x</span>";
     cardclose.id = book.title;
-    // cardclose.addEventListener("click", (e) => {
-    //     console.log(e);
-    //     removeBook(e);
-    // });
-    // card.innerHTML = "<span class=\"cardclose\">x</span>";
     card.appendChild(cardclose);
+
     card.innerHTML += "<img src=\"static/open-book-clip-art_3637477.png\" style=\"width:100%\">";
 
     cardtitle.textContent = book.title;
     cardauthor.textContent = book.author;
     cardpages.textContent = `Pages: ${book.pages}`;
     cardreadbutton.textContent = book.read ? "Have read" : "Not read yet"
+
     cardcontainer.appendChild(cardtitle);
     cardcontainer.appendChild(cardauthor);
     cardcontainer.appendChild(cardpages);
     cardcontainer.appendChild(cardreadbutton);
     card.appendChild(cardcontainer);
-    // carddiv.appendChild(cardcontainer);
-    // card.appendChild(carddiv);
     return card;
 }
 
@@ -108,11 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }];
 
     for (let book of books) {
-        // addBookToLibrary(books[entry]);
-        // const book = books[entry];
         const tmpbook = new Book(book.title, book.author, book.pages, book.read);
         addBookToLibrary(tmpbook);
     }
     updateBookCase();
-    // console.log(myLibrary);
 })
