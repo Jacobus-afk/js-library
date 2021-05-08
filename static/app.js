@@ -17,7 +17,34 @@ function removeBookFromLibrary(title) {
 }
 
 const addBookButton = document.querySelector(".add_book_button");
+
+const fullscreenGreyOut = document.querySelector(".fullscreen-container");
+const addBookPopup = document.querySelector(".addbook");
+const addBookForm = document.querySelector(".addbookform");
+const submitFormButton = document.querySelector(".submitform");
+const cancelFormButton = document.querySelector(".cancelform");
+
 const bookCase = document.querySelector(".bookcase");
+
+function showAddBookForm() {
+    addBookPopup.style.display = "block";
+    fullscreenGreyOut.style.display = "block";
+}
+
+function hideAddBookForm() {
+    addBookPopup.style.display = "none";
+    fullscreenGreyOut.style.display = "none";
+}
+
+function handleNewBookAdd(event) {
+    event.preventDefault();
+    const { title, author, pages, read } = this.elements;
+    const book = new Book(title.value, author.value, pages.value, read.checked);
+    addBookToLibrary(book);
+    hideAddBookForm();
+    addBookForm.reset();
+    updateBookCase();
+}
 
 function removeBook(e) {
     removeBookFromLibrary(e.currentTarget.id);
@@ -73,6 +100,10 @@ function addBookToShelf(book) {
     return card;
 }
 
+addBookButton.addEventListener("click", showAddBookForm);
+addBookForm.addEventListener("submit", handleNewBookAdd);
+cancelFormButton.addEventListener("click", hideAddBookForm);
+
 document.addEventListener("DOMContentLoaded", () => {
     const books = [{
         title: "Testicles",
@@ -81,6 +112,26 @@ document.addEventListener("DOMContentLoaded", () => {
         read: true },
     {
         title: "Specticles",
+        author: "Wakespeare",
+        pages: 500,
+        read: false },
+    {
+        title: "Tpecticles",
+        author: "Wakespeare",
+        pages: 500,
+        read: false },
+    {
+        title: "Upecticles",
+        author: "Wakespeare",
+        pages: 500,
+        read: false },
+    {
+        title: "Vpecticles",
+        author: "Wakespeare",
+        pages: 500,
+        read: false },
+    {
+        title: "Wpecticles",
         author: "Wakespeare",
         pages: 500,
         read: false },

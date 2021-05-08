@@ -6,8 +6,8 @@
 .bookcase {
     display: flex;
     flex-wrap: wrap;
-    margin-left: -8px;
-    margin-right: -8px;
+    margin-left: 4px;
+    margin-right: 4px;
 }
 
 .cardclose {
@@ -20,28 +20,116 @@
     text-align: center;
 }
 
-.cardclose:hover {background: rgba(0,0,0,0.2);}
+.cardclose:hover {
+    background: #CDCDCD;
+}
 
 .card {
     position: relative;
     padding-left: 8px;
     padding-right: 8px;
-    margin-left: 4px;
-    margin-right: 4px;
+    margin: 5px;
+    /* margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px; */
     max-width: 200px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
     border-radius: 5px;
-  }
+}
 
-  .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  }
+.card:hover, .add_book_button:hover, .formbutton:hover {
+box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
 
-  .cardcontainer {
-    padding: 2px 16px;
-  }
+.cardcontainer {
+padding: 2px 16px;
+}
 
-  .cardtitle {
-    text-transform: uppercase;
-  }
+.cardtitle {
+text-transform: uppercase;
+}
+
+.add_book_button {
+    background-color: white;
+    padding: 16px 20px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 23px;
+    right: 28px;
+    z-index: 1;
+}
+
+.fullscreen-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(90, 90, 90, 0.5);
+    z-index: 2;
+}
+
+.addbook {
+    /* position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    min-width: 300px;
+    transform: translate(-50%, -50%); */
+    background: white;
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 15px;
+    z-index: 9;
+    border-radius: 5px;
+}
+
+.addbookform {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 10px;
+    /* z-index: 9; */
+}
+
+.addbookforminput:focus {
+    outline: none;
+    background-color: #CDCDCD;
+    border-radius: 5px;
+}
+
+.addbookforminput {
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 5px;
+}
+
+.formcheckbox {
+    display: flex;
+    padding: 15px;
+    margin: 0 0 15px 0;
+}
+
+.formbuttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.formbutton {
+    background-color: white;
+    padding: 16px 20px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* width: 100px; */
+}
