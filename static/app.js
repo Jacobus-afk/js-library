@@ -121,46 +121,50 @@ addBookForm.addEventListener("submit", handleNewBookAdd);
 cancelFormButton.addEventListener("click", hideAddBookForm);
 
 document.addEventListener("DOMContentLoaded", () => {
-    const books = [{
-        title: "Testicles",
-        author: "Shakespeare",
-        pages: 30,
-        read: true },
-    {
-        title: "Specticles",
-        author: "Wakespeare",
-        pages: 500,
-        read: false },
-    {
-        title: "Tpecticles",
-        author: "Wakespeare",
-        pages: 500,
-        read: false },
-    {
-        title: "Upecticles",
-        author: "Wakespeare",
-        pages: 500,
-        read: false },
-    {
-        title: "Vpecticles",
-        author: "Wakespeare",
-        pages: 500,
-        read: false },
-    {
-        title: "Wpecticles",
-        author: "Wakespeare",
-        pages: 500,
-        read: false },
-    {
-        title: "Icicles",
-        author: "Bakespeare",
-        pages: 76,
-        read: true
-    }];
-
-    for (const book of books) {
-        const tmpbook = new Book(book.title, book.author, book.pages, book.read);
-        addBookToLibrary(tmpbook);
-    }
     updateBookCase();
-})
+});
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     const books = [{
+//         title: "Testicles",
+//         author: "Shakespeare",
+//         pages: 30,
+//         read: true },
+//     {
+//         title: "Specticles",
+//         author: "Wakespeare",
+//         pages: 500,
+//         read: false },
+//     {
+//         title: "Tpecticles",
+//         author: "Wakespeare",
+//         pages: 500,
+//         read: false },
+//     {
+//         title: "Upecticles",
+//         author: "Wakespeare",
+//         pages: 500,
+//         read: false },
+//     {
+//         title: "Vpecticles",
+//         author: "Wakespeare",
+//         pages: 500,
+//         read: false },
+//     {
+//         title: "Wpecticles",
+//         author: "Wakespeare",
+//         pages: 500,
+//         read: false },
+//     {
+//         title: "Icicles",
+//         author: "Bakespeare",
+//         pages: 76,
+//         read: true
+//     }];
+
+//     for (const book of books) {
+//         const tmpbook = new Book(book.title, book.author, book.pages, book.read);
+//         addBookToLibrary(tmpbook);
+//     }
+//     updateBookCase();
+// })
