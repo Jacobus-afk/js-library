@@ -65,8 +65,6 @@ text-transform: uppercase;
     z-index: 1;
 }
 
-
-
 .fullscreen-container {
     display: none;
     position: fixed;

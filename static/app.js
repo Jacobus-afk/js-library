@@ -14,7 +14,6 @@ function addBookToLibrary(book) {
 
 function removeBookFromLibrary(title) {
     myLibrary.splice(myLibrary.findIndex(book => book.title === title), 1)
-    // myLibrary = myLibrary.filter(book => book.title !== title);
 }
 
 const addBookButton = document.querySelector(".add_book_button");
@@ -53,7 +52,6 @@ function removeBook() {
 }
 
 function changeReadState() {
-    // console.log(this.id);
     const index = myLibrary.findIndex(book => book.title === this.id);
     myLibrary[index].read ^= true;
     updateBookCase();
@@ -100,6 +98,7 @@ function addBookToShelf(book) {
     cardclose.id = book.title;
     card.appendChild(cardclose);
 
+    // https://www.pinclipart.com/pindetail/iibxhix_books-png-clipart-psd-vectors-and-icons-for/
     card.innerHTML += "<img src=\"static/open-book-clip-art_3637477.png\" style=\"width:100%\">";
 
     cardtitle.textContent = book.title;
