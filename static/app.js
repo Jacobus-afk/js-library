@@ -1,6 +1,19 @@
 "use strict";
 const myLibrary = [];
 
+const fullscreenGreyOut = document.querySelector(".fullscreen-container");
+const addBookButton = document.querySelector(".add_book_button");
+const addBookPopup = document.querySelector(".addbook");
+const addBookForm = document.querySelector(".addbookform");
+// const submitFormButton = document.querySelector(".submitform");
+const cancelFormButton = document.querySelector(".cancelform");
+
+const bookCase = document.querySelector(".bookcase");
+
+const dbRefObject = firebase.database().ref().child('object');
+const dbRefLib = dbRefObject.child('library');
+
+
 function Book(title, author, pages, haveread, id) {
     this.title = title;
     this.author = author;
@@ -20,18 +33,7 @@ function removeBookFromLibrary(id) {
     myLibrary.splice(index, 1);
 }
 
-const addBookButton = document.querySelector(".add_book_button");
-
-const fullscreenGreyOut = document.querySelector(".fullscreen-container");
-const addBookPopup = document.querySelector(".addbook");
-const addBookForm = document.querySelector(".addbookform");
-const submitFormButton = document.querySelector(".submitform");
-const cancelFormButton = document.querySelector(".cancelform");
-
-const bookCase = document.querySelector(".bookcase");
-
-const dbRefObject = firebase.database().ref().child('object');
-const dbRefLib = dbRefObject.child('library');
+// webpage
 
 function showAddBookForm() {
     addBookPopup.style.display = "block";
@@ -43,53 +45,7 @@ function hideAddBookForm() {
     fullscreenGreyOut.style.display = "none";
 }
 
-function handleNewBookAdd(event) {
-    event.preventDefault();
-    const { title, author, pages, read } = this.elements;
-
-    const newBookID = dbRefLib.push().key;
-    const newbook = new Book(title.value, author.value, pages.value, read.checked, newBookID);
-    const update = {}
-    update[newBookID] = newbook;
-    dbRefLib.update(update);
-
-    hideAddBookForm();
-    addBookForm.reset();
-    updateBookCase();
-}
-
-function removeBook() {
-    dbRefLib.child(this.id).remove();
-}
-
-function changeReadState() {
-    const index = myLibrary.findIndex(book => book.id === this.id);
-    const tmp = {...myLibrary[index]}
-    tmp.read ^= true;
-    const update = {}
-    update[this.id] = tmp;
-    dbRefLib.update(update);
-}
-
-function loadDatabase(snap) {
-    Object.keys(snap.val()).map(k => {
-        const entry = snap.val()[k];
-        const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
-        addBookToLibrary(book);
-    });
-    updateBookCase();
-}
-
-function updateDataBase(snap) {
-    const entry = snap.val()
-
-    const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
-    addBookToLibrary(book);
-
-    updateBookCase();
-}
-
-function handleDataBaseEntryRemoval(snap) {
+function handleLocalLibEntryRemoval(snap) {
     const entry = snap.val();
     removeBookFromLibrary(entry.id);
 
@@ -157,6 +113,55 @@ function addBookToShelf(book) {
     return card;
 }
 
+// firebase
+
+function handleNewBookAdd(event) {
+    event.preventDefault();
+    const { title, author, pages, read } = this.elements;
+
+    const newBookID = dbRefLib.push().key;
+    const newbook = new Book(title.value, author.value, pages.value, read.checked, newBookID);
+    const update = {}
+    update[newBookID] = newbook;
+    dbRefLib.update(update);
+
+    hideAddBookForm();
+    addBookForm.reset();
+    updateBookCase();
+}
+
+function removeBook() {
+    dbRefLib.child(this.id).remove();
+}
+
+function changeReadState() {
+    const index = myLibrary.findIndex(book => book.id === this.id);
+    const tmp = {...myLibrary[index]}
+    tmp.read ^= true;
+    const update = {}
+    update[this.id] = tmp;
+    dbRefLib.update(update);
+}
+
+function loadDatabase(snap) {
+    Object.keys(snap.val()).map(k => {
+        const entry = snap.val()[k];
+        const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
+        addBookToLibrary(book);
+    });
+    updateBookCase();
+}
+
+function updateDataBase(snap) {
+    const entry = snap.val()
+
+    const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
+    addBookToLibrary(book);
+
+    updateBookCase();
+}
+
+
 firebase.auth().signInAnonymously()
     .then(() => {
 
@@ -170,10 +175,9 @@ firebase.auth().onAuthStateChanged((user) => {
         const uid = user.uid;
         dbRefLib.on('child_changed', updateDataBase);
         dbRefLib.limitToLast(1).on('child_added', updateDataBase);
-        dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
+        dbRefLib.on('child_removed', handleLocalLibEntryRemoval);
 
         dbRefLib.once('value', loadDatabase);
-        // console.log(`User id: ${uid}`);
     } else {
         console.log('not logged in');
     }
@@ -182,9 +186,3 @@ firebase.auth().onAuthStateChanged((user) => {
 addBookButton.addEventListener("click", showAddBookForm);
 addBookForm.addEventListener("submit", handleNewBookAdd);
 cancelFormButton.addEventListener("click", hideAddBookForm);
-
-// dbRefLib.on('child_changed', updateDataBase);
-// dbRefLib.limitToLast(1).on('child_added', updateDataBase);
-// dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
-
-// dbRefLib.once('value', loadDatabase);
