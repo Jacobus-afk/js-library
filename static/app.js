@@ -1,6 +1,5 @@
 "use strict";
 const myLibrary = [];
-// const mySetLibrary = new Set();
 
 function Book(title, author, pages, haveread, id) {
     this.title = title;
@@ -11,7 +10,6 @@ function Book(title, author, pages, haveread, id) {
 }
 
 function addBookToLibrary(book) {
-    // mySetLibrary.add({[book.title] : book});
     removeBookFromLibrary(book.id);
     myLibrary.push(book);
 }
@@ -20,8 +18,6 @@ function removeBookFromLibrary(id) {
     const index = myLibrary.findIndex(book => book.id === id);
     if (index === -1) { return; }
     myLibrary.splice(index, 1);
-
-    // mySetLibrary.delete(title);
 }
 
 const addBookButton = document.querySelector(".add_book_button");
@@ -50,7 +46,6 @@ function hideAddBookForm() {
 function handleNewBookAdd(event) {
     event.preventDefault();
     const { title, author, pages, read } = this.elements;
-    // const id = 99;
 
     const newBookID = dbRefLib.push().key;
     const newbook = new Book(title.value, author.value, pages.value, read.checked, newBookID);
@@ -58,8 +53,6 @@ function handleNewBookAdd(event) {
     update[newBookID] = newbook;
     dbRefLib.update(update);
 
-    // const book = new Book(title.value, author.value, pages.value, read.checked, id);
-    // addBookToLibrary(newbook);
     hideAddBookForm();
     addBookForm.reset();
     updateBookCase();
@@ -67,32 +60,20 @@ function handleNewBookAdd(event) {
 
 function removeBook() {
     dbRefLib.child(this.id).remove();
-
-    // removeBookFromLibrary(this.id);
-
-    // updateBookCase();
 }
 
 function changeReadState() {
     const index = myLibrary.findIndex(book => book.id === this.id);
-    // myLibrary[index].read ^= true;
     const tmp = {...myLibrary[index]}
     tmp.read ^= true;
     const update = {}
     update[this.id] = tmp;
     dbRefLib.update(update);
-    // mySetLibrary[this.id].read ^= true;
-    // updateBookCase();
 }
 
 function loadDatabase(snap) {
-    // for (entry of snap.val()) {
-    //     const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
-    //     addBookToLibrary(book);
-    // }
     Object.keys(snap.val()).map(k => {
         const entry = snap.val()[k];
-        // const id = k;
         const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
         addBookToLibrary(book);
     });
@@ -101,19 +82,14 @@ function loadDatabase(snap) {
 
 function updateDataBase(snap) {
     const entry = snap.val()
-    // const id = snap.key;
-    // console.log(id);
 
     const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
     addBookToLibrary(book);
-    
 
-     // console.log(entry);
     updateBookCase();
 }
 
 function handleDataBaseEntryRemoval(snap) {
-    // console.log(snap.val());
     const entry = snap.val();
     removeBookFromLibrary(entry.id);
 
@@ -122,10 +98,6 @@ function handleDataBaseEntryRemoval(snap) {
 
 function updateBookCase() {
     bookCase.innerHTML = "";
-
-    // for (const book of mySetLibrary) {
-    //     bookCase.appendChild(addBookToShelf(book));
-    // }
 
     const sorted_lib = myLibrary.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0));
 
@@ -194,54 +166,3 @@ dbRefLib.limitToLast(1).on('child_added', updateDataBase);
 dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
 
 dbRefLib.once('value', loadDatabase);
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     // updateBookCase();
-//     const dbRefObject = firebase.database().ref().child('object');
-//     dbRefObject.on('value', loadDataBase);
-// });
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     const books = [{
-//         title: "Testicles",
-//         author: "Shakespeare",
-//         pages: 30,
-//         read: true },
-//     {
-//         title: "Specticles",
-//         author: "Wakespeare",
-//         pages: 500,
-//         read: false },
-//     {
-//         title: "Tpecticles",
-//         author: "Wakespeare",
-//         pages: 500,
-//         read: false },
-//     {
-//         title: "Upecticles",
-//         author: "Wakespeare",
-//         pages: 500,
-//         read: false },
-//     {
-//         title: "Vpecticles",
-//         author: "Wakespeare",
-//         pages: 500,
-//         read: false },
-//     {
-//         title: "Wpecticles",
-//         author: "Wakespeare",
-//         pages: 500,
-//         read: false },
-//     {
-//         title: "Icicles",
-//         author: "Bakespeare",
-//         pages: 76,
-//         read: true
-//     }];
-
-//     for (const book of books) {
-//         const tmpbook = new Book(book.title, book.author, book.pages, book.read);
-//         addBookToLibrary(tmpbook);
-//     }
-//     updateBookCase();
-// })
