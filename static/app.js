@@ -1,19 +1,27 @@
 "use strict";
 const myLibrary = [];
+// const mySetLibrary = new Set();
 
-function Book(title, author, pages, haveread) {
+function Book(title, author, pages, haveread, id) {
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = haveread;
+    this.id = id
 }
 
 function addBookToLibrary(book) {
+    // mySetLibrary.add({[book.title] : book});
+    removeBookFromLibrary(book.id);
     myLibrary.push(book);
 }
 
-function removeBookFromLibrary(title) {
-    myLibrary.splice(myLibrary.findIndex(book => book.title === title), 1)
+function removeBookFromLibrary(id) {
+    const index = myLibrary.findIndex(book => book.id === id);
+    if (index === -1) { return; }
+    myLibrary.splice(index, 1);
+
+    // mySetLibrary.delete(title);
 }
 
 const addBookButton = document.querySelector(".add_book_button");
@@ -25,6 +33,9 @@ const submitFormButton = document.querySelector(".submitform");
 const cancelFormButton = document.querySelector(".cancelform");
 
 const bookCase = document.querySelector(".bookcase");
+
+const dbRefObject = firebase.database().ref().child('object');
+const dbRefLib = dbRefObject.child('library');
 
 function showAddBookForm() {
     addBookPopup.style.display = "block";
@@ -39,28 +50,86 @@ function hideAddBookForm() {
 function handleNewBookAdd(event) {
     event.preventDefault();
     const { title, author, pages, read } = this.elements;
-    const book = new Book(title.value, author.value, pages.value, read.checked);
-    addBookToLibrary(book);
+    // const id = 99;
+
+    const newBookID = dbRefLib.push().key;
+    const newbook = new Book(title.value, author.value, pages.value, read.checked, newBookID);
+    const update = {}
+    update[newBookID] = newbook;
+    dbRefLib.update(update);
+
+    // const book = new Book(title.value, author.value, pages.value, read.checked, id);
+    // addBookToLibrary(newbook);
     hideAddBookForm();
     addBookForm.reset();
     updateBookCase();
 }
 
 function removeBook() {
-    removeBookFromLibrary(this.id);
-    updateBookCase();
+    dbRefLib.child(this.id).remove();
+
+    // removeBookFromLibrary(this.id);
+
+    // updateBookCase();
 }
 
 function changeReadState() {
-    const index = myLibrary.findIndex(book => book.title === this.id);
-    myLibrary[index].read ^= true;
+    const index = myLibrary.findIndex(book => book.id === this.id);
+    // myLibrary[index].read ^= true;
+    const tmp = {...myLibrary[index]}
+    tmp.read ^= true;
+    const update = {}
+    update[this.id] = tmp;
+    dbRefLib.update(update);
+    // mySetLibrary[this.id].read ^= true;
+    // updateBookCase();
+}
+
+function loadDatabase(snap) {
+    // for (entry of snap.val()) {
+    //     const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
+    //     addBookToLibrary(book);
+    // }
+    Object.keys(snap.val()).map(k => {
+        const entry = snap.val()[k];
+        // const id = k;
+        const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
+        addBookToLibrary(book);
+    });
+    updateBookCase();
+}
+
+function updateDataBase(snap) {
+    const entry = snap.val()
+    // const id = snap.key;
+    // console.log(id);
+
+    const book = new Book(entry.title, entry.author, entry.pages, entry.read, entry.id);
+    addBookToLibrary(book);
+    
+
+     // console.log(entry);
+    updateBookCase();
+}
+
+function handleDataBaseEntryRemoval(snap) {
+    // console.log(snap.val());
+    const entry = snap.val();
+    removeBookFromLibrary(entry.id);
+
     updateBookCase();
 }
 
 function updateBookCase() {
     bookCase.innerHTML = "";
 
-    for (const book of myLibrary) {
+    // for (const book of mySetLibrary) {
+    //     bookCase.appendChild(addBookToShelf(book));
+    // }
+
+    const sorted_lib = myLibrary.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0));
+
+    for (const book of sorted_lib) {
         bookCase.appendChild(addBookToShelf(book));
     }
 
@@ -95,7 +164,7 @@ function addBookToShelf(book) {
     cardclose.classList.add("cardclose");
 
     cardclose.innerHTML = "<span>x</span>";
-    cardclose.id = book.title;
+    cardclose.id = book.id;
     card.appendChild(cardclose);
 
     // https://www.pinclipart.com/pindetail/iibxhix_books-png-clipart-psd-vectors-and-icons-for/
@@ -109,7 +178,7 @@ function addBookToShelf(book) {
     cardcontainer.appendChild(cardtitle);
     cardcontainer.appendChild(cardauthor);
     cardcontainer.appendChild(cardpages);
-    cardreadbutton.id = book.title;
+    cardreadbutton.id = book.id;
     buttondiv.appendChild(cardreadbutton);
     cardcontainer.appendChild(buttondiv);
     card.appendChild(cardcontainer);
@@ -120,9 +189,17 @@ addBookButton.addEventListener("click", showAddBookForm);
 addBookForm.addEventListener("submit", handleNewBookAdd);
 cancelFormButton.addEventListener("click", hideAddBookForm);
 
-document.addEventListener("DOMContentLoaded", () => {
-    updateBookCase();
-});
+dbRefLib.on('child_changed', updateDataBase);
+dbRefLib.limitToLast(1).on('child_added', updateDataBase);
+dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
+
+dbRefLib.once('value', loadDatabase);
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     // updateBookCase();
+//     const dbRefObject = firebase.database().ref().child('object');
+//     dbRefObject.on('value', loadDataBase);
+// });
 
 // document.addEventListener("DOMContentLoaded", () => {
 //     const books = [{
