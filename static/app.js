@@ -157,6 +157,23 @@ function addBookToShelf(book) {
     return card;
 }
 
+firebase.auth().signInAnonymously()
+    .then(() => {
+
+    })
+    .catch((error) => {
+        console.log(error.message);
+    });
+
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        const uid = user.uid;
+        console.log(`User id: ${uid}`);
+    } else {
+        console.log('not logged in');
+    }
+})
+
 addBookButton.addEventListener("click", showAddBookForm);
 addBookForm.addEventListener("submit", handleNewBookAdd);
 cancelFormButton.addEventListener("click", hideAddBookForm);
