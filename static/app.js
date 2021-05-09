@@ -168,7 +168,12 @@ firebase.auth().signInAnonymously()
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         const uid = user.uid;
-        console.log(`User id: ${uid}`);
+        dbRefLib.on('child_changed', updateDataBase);
+        dbRefLib.limitToLast(1).on('child_added', updateDataBase);
+        dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
+
+        dbRefLib.once('value', loadDatabase);
+        // console.log(`User id: ${uid}`);
     } else {
         console.log('not logged in');
     }
@@ -178,8 +183,8 @@ addBookButton.addEventListener("click", showAddBookForm);
 addBookForm.addEventListener("submit", handleNewBookAdd);
 cancelFormButton.addEventListener("click", hideAddBookForm);
 
-dbRefLib.on('child_changed', updateDataBase);
-dbRefLib.limitToLast(1).on('child_added', updateDataBase);
-dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
+// dbRefLib.on('child_changed', updateDataBase);
+// dbRefLib.limitToLast(1).on('child_added', updateDataBase);
+// dbRefLib.on('child_removed', handleDataBaseEntryRemoval);
 
-dbRefLib.once('value', loadDatabase);
+// dbRefLib.once('value', loadDatabase);
